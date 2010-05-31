@@ -37,15 +37,20 @@ public class TSCalibrationStartup extends Activity {
             Intent starterIntent = new Intent(this, TSCalibration.class);
             startActivityForResult(starterIntent, 0);
         }
+        deleteFromPackageManger();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        deleteFromPackageManger();
+        finish();
+    }
+
+    private void deleteFromPackageManger() {
         // remove this activity from the package manager.
         PackageManager pm = getPackageManager();
         ComponentName name = new ComponentName(this, TSCalibrationStartup.class);
         pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
-        finish();
     }
 }
