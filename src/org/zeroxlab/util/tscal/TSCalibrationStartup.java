@@ -36,8 +36,9 @@ public class TSCalibrationStartup extends Activity {
         if (!calFile.exists()) {
             Intent starterIntent = new Intent(this, TSCalibration.class);
             startActivityForResult(starterIntent, 0);
+        } else {
+            deleteFromPackageManger();
         }
-        deleteFromPackageManger();
     }
 
     @Override
