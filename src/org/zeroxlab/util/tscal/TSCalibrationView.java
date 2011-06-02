@@ -36,8 +36,8 @@ public class TSCalibrationView extends View {
     private class TargetPoint {
         public int x;
         public int y;
-        public int calx;
-        public int caly;
+        public float calx;
+        public float caly;
         public TargetPoint(int x, int y) {
             this.x = x;
             this.y = y;
@@ -69,17 +69,60 @@ public class TSCalibrationView extends View {
     }
 
     public void dumpCalData(File file) {
-        StringBuilder sb = new StringBuilder();
+        float x, y, x2, y2, xy, z, zx, zy;
+        float det, a, b, c, e, f, i;
+        int[] vals = new int[7];
+
+        x = 0.0f;
+        y = 0.0f;
+        x2 = 0.0f;
+        y2 = 0.0f;
+        xy = 0.0f;
         for (TargetPoint point : mTargetPoints) {
-            sb.append(point.calx);
-            sb.append(" ");
-            sb.append(point.caly);
-            sb.append(" ");
+            x += point.calx;
+            y += point.caly;
+            x2 += point.calx * point.calx;
+            y2 += point.caly * point.caly;
+            xy += point.calx * point.caly;
         }
+
+        det = 5.0f * (x2 * y2 - xy * xy) + x * (xy * y - x * y2) + y * (x * xy - y * x2);
+        a = (x2 * y2 - xy * xy) / det;
+        b = (xy * y - x * y2) / det;
+        c = (x * xy - y * x2) / det;
+        e = (5.0f * y2 - y * y) / det;
+        f = (x * y - 5.0f * xy) / det;
+        i = (5.0f * x2 - x * x) / det;
+
+        z = 0.0f;
+        zx = 0.0f;
+        zy = 0.0f;
         for (TargetPoint point : mTargetPoints) {
-            sb.append(point.x);
-            sb.append(" ");
-            sb.append(point.y);
+            z += (float)point.x;
+            zx += (float)point.x * point.calx;
+            zy += (float)point.x * point.caly;
+        }
+        vals[2] = (int)((a * z + b * zx + c * zy) * 65536.0f);
+        vals[0] = (int)((b * z + e * zx + f * zy) * 65536.0f);
+        vals[1] = (int)((c * z + f * zx + i * zy) * 65536.0f);
+
+        z = 0.0f;
+        zx = 0.0f;
+        zy = 0.0f;
+        for (TargetPoint point : mTargetPoints) {
+            z += (float)point.y;
+            zx += (float)point.y * point.calx;
+            zy += (float)point.y * point.caly;
+        }
+        vals[5] = (int)((a * z + b * zx + c * zy) * 65536.0f);
+        vals[3] = (int)((b * z + e * zx + f * zy) * 65536.0f);
+        vals[4] = (int)((c * z + f * zx + i * zy) * 65536.0f);
+
+        vals[6] = 65536;
+
+        StringBuilder sb = new StringBuilder();
+        for (int val : vals) {
+            sb.append(val);
             sb.append(" ");
         }
         try {
@@ -88,9 +131,9 @@ public class TSCalibrationView extends View {
             fos.flush();
             fos.getFD().sync();
             fos.close();
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException ex) {
             Log.e(TAG, "Cannot open file " + file);
-        } catch (IOException e) {
+        } catch (IOException ex) {
             Log.e(TAG, "Cannot write file " + file);
         }
     }
@@ -101,8 +144,8 @@ public class TSCalibrationView extends View {
             return true;
         if (ev.getAction() != MotionEvent.ACTION_UP)
             return true;
-        mTargetPoints[mStep].calx = (int)ev.getRawX();
-        mTargetPoints[mStep].caly = (int)ev.getRawY();
+        mTargetPoints[mStep].calx = ev.getRawX() * ev.getXPrecision();
+        mTargetPoints[mStep].caly = ev.getRawY() * ev.getYPrecision();
         mStep++;
         mContext.onCalTouchEvent(ev);
         return true;

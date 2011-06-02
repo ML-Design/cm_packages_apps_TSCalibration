@@ -26,7 +26,7 @@ import java.io.File;
 
 public class TSCalibrationStartup extends Activity {
 
-    private static String cal_path = "/data/misc/tscal/pointercal";
+    private static String cal_path = "/data/misc/pointercal";
 
 
     @Override

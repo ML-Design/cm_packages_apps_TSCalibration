@@ -31,8 +31,8 @@ import android.util.Log;
 public class TSCalibration extends Activity {
 
     final private static String TAG = "TSCalibration";
-    final private static String POINTERCAL = "/data/misc/tscal/pointercal";
-    final private static String defaultPointercalValues = "1 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1\n";
+    final private static String POINTERCAL = "/data/misc/pointercal";
+    final private static String defaultPointercalValues = "1 0 0 0 1 0 1\n";
     final private static File FILE = new File(POINTERCAL);
 
     private TSCalibrationView mTSCalibrationView;
