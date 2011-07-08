@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -60,8 +61,8 @@ public class TSCalibration extends Activity {
     {
         if (mTSCalibrationView.isFinished()) {
             mTSCalibrationView.dumpCalData(FILE);
-            setResult(0);
-            finish();
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            pm.reboot("");
         } else {
             setContentView(mTSCalibrationView);
         }
