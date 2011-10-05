@@ -24,7 +24,7 @@ limitations under the License.
     <activity android:name=".TSCalibration"
               android:label="Calibration"
               android:launchMode="standard"
-              android:screenOrientation="nosensor"
+              android:screenOrientation="landscape"
               android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
               android:configChanges="keyboard|keyboardHidden|navigation|orientation">
       <intent-filter>
